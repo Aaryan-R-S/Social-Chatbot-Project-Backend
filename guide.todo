@@ -1,0 +1,12 @@
+%% Backend %%
+    ☐ npm init
+    ☐ npm i express
+    ☐ npm i mongoose
+    ☐ npm i -D nodemon
+    ☐ nodemon ./index.js
+
+%% To Do %%
+    ☐ Make "repository" on GitHub
+    ☐ Online Database "MongoDB Atlas"
+    ☐ Deploy on Heroku OR "IIITD server"
+    ☐ Add "questions" and "videos" to database
