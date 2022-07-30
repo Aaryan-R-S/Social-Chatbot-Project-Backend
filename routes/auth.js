@@ -132,4 +132,10 @@ router.post('/deleteUser', fetchUser, async (req, res)=>{
     }
 })
 
+// ROUTE 5: check authentication of a user using: GET "/api/auth/checkLogin"; Auth token required
+router.get('/checkLogin', fetchUser, async (req, res)=>{
+    success = true;
+    res.status(200).json({success});
+})
+
 module.exports = router;
