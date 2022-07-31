@@ -30,7 +30,7 @@ router.post('/fetchNext', [
         if(req.body.uniqueid=="0"){
             myNextQuestion = await Question.findOne({uniqueid:"1"}).select(["-nextquestions", "-suggestions", "-videos"]);
             success = true;
-            let myCurrQuestionResults = {suggestions: [], videos: []};
+            let myCurrQuestionResults = {questionTxt:"", answers:[], suggestions: [], videos: []};
             return res.status(200).json({success, myNextQuestion, myCurrQuestionResults});
         }
         else{
@@ -38,7 +38,7 @@ router.post('/fetchNext', [
             if(myCurrQuestion==null){
                 // restart
                 myNextQuestion = await Question.findOne({uniqueid: "1"}).select(["-nextquestions", "-suggestions", "-videos"]);
-                let myCurrQuestionResults = {suggestions: [], videos: []};
+                let myCurrQuestionResults = {questionTxt:"", answers:[], suggestions: [], videos: []};
                 return res.status(400).json({success, errors: "Invalid uniqueid provided", myNextQuestion, myCurrQuestionResults})
             }
             if(myCurrQuestion.nextquestions.length==0){
@@ -46,7 +46,7 @@ router.post('/fetchNext', [
             }
             else if(myCurrQuestion.nextquestions.length<=req.body.answerid){
                 // invalid answer -- send same curr question again
-                let myCurrQuestionResults = {suggestions: [], videos: []};
+                let myCurrQuestionResults = {questionTxt:"", answers:[], suggestions: [], videos: []};
                 return res.status(400).json({success, errors: "Invalid answerid provided", myNextQuestion: myCurrQuestion, myCurrQuestionResults})
             }
             else if(req.body.answerid==-1){
@@ -60,7 +60,7 @@ router.post('/fetchNext', [
             }
             
         }
-        let myCurrQuestionResults = {suggestions: [], videos: []};
+        let myCurrQuestionResults = {questionTxt:"", answers:[], suggestions: [], videos: []};
         if (myCurrQuestion){ 
             if(myCurrQuestion.suggestions.length>0){
                 myCurrQuestionResults.suggestions = myCurrQuestion.suggestions[req.body.answerid];
@@ -68,6 +68,8 @@ router.post('/fetchNext', [
             if(myCurrQuestion.videos.length>0){
                 myCurrQuestionResults.videos = myCurrQuestion.videos[req.body.answerid];
             }
+            myCurrQuestionResults.questionTxt = myCurrQuestion.text;
+            myCurrQuestionResults.answers = myCurrQuestion.answers;
         }
         success = true;
         res.status(200).json({success, myNextQuestion, myCurrQuestionResults});
