@@ -8,7 +8,6 @@ const { body, validationResult } = require('express-validator');
 // Fetch next question on the basis of last answered question. Also report if done.
 // For initial fetch give uid 0
 // If possible answer is empty then answer id -1
-// Handle the case when user provide no input or just press enter
 
 // ROUTE 1: Get basic question using: GET "/api/question/fetchNext"; No Login required
 router.post('/fetchNext', [
@@ -41,19 +40,25 @@ router.post('/fetchNext', [
                 let myCurrQuestionResults = {questionTxt:"", answers:[], suggestions: [], videos: []};
                 return res.status(400).json({success, errors: "Invalid uniqueid provided", myNextQuestion, myCurrQuestionResults})
             }
-            if(myCurrQuestion.nextquestions.length==0){
+            if(myCurrQuestion.nextquestions.length==0 && (req.body.answerid!=-1 || myCurrQuestion.answers.length==0)){
                 // all done
+                myNextQuestion = await Question.findOne({uniqueid: req.body.uniqueid}).select(["-nextquestions", "-suggestions", "-videos"]);
             }
             else if(myCurrQuestion.nextquestions.length<=req.body.answerid){
                 // invalid answer -- send same curr question again
                 let myCurrQuestionResults = {questionTxt:"", answers:[], suggestions: [], videos: []};
                 return res.status(400).json({success, errors: "Invalid answerid provided", myNextQuestion: myCurrQuestion, myCurrQuestionResults})
             }
-            else if(req.body.answerid==-1){
+            else if(req.body.answerid==-1 && myCurrQuestion.answers.length==0){
                 myNextQuestion = await Question.findOne({uniqueid: myCurrQuestion.nextquestions[0]}).select(["-nextquestions", "-suggestions", "-videos"]);
+            }
+            else if(req.body.answerid==-1 && myCurrQuestion.answers.length>0){
+                let myCurrQuestionResults = {questionTxt:"", answers:[], suggestions: [], videos: []};
+                return res.status(400).json({success, errors: "Invalid answerid provided", myNextQuestion: myCurrQuestion, myCurrQuestionResults})
             }
             else if(myCurrQuestion.nextquestions[req.body.answerid]==null){
                 // all done
+                myNextQuestion = await Question.findOne({uniqueid: req.body.uniqueid}).select(["-nextquestions", "-suggestions", "-videos"]);
             }
             else{
                 myNextQuestion = await Question.findOne({uniqueid: myCurrQuestion.nextquestions[req.body.answerid]}).select(["-nextquestions", "-suggestions", "-videos"]);
