@@ -26,6 +26,7 @@ router.post('/fetchNext', [
  
     try{
         let myNextQuestion = null, myCurrQuestion = null;
+        // first question
         if(req.body.uniqueid=="0"){
             myNextQuestion = await Question.findOne({uniqueid:"1"}).select(["-nextquestions", "-suggestions", "-videos"]);
             success = true;

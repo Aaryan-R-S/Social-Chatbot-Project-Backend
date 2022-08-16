@@ -14,6 +14,10 @@ const QuestionnaireSchema = new Schema({
             date:{ type: Date, default: Date.now}, 
         }
     },
+    appointmenttaken: {
+        type: Boolean,
+        default: false
+    }
 });
 
 module.exports = mongoose.model('questionnaire', QuestionnaireSchema);
