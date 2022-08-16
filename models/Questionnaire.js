@@ -1,23 +1,26 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const QuestionnaireSchema = new Schema({
-    user:{
+    user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user'
+        ref: "user",
     },
-    questionanswers:{ 
+    questionanswers: {
         type: Array,
-        items: { 
-            questionid:{ type: String, required: true},
-            answer:{ type: String, required: true},
-            date:{ type: Date, default: Date.now}, 
-        }
+        items: {
+            questionid: { type: String, required: true },
+            answer: { type: String, required: true },
+        },
+    },
+    submissiondate: { 
+        type: Date, 
+        default: Date.now 
     },
     appointmenttaken: {
         type: Boolean,
-        default: false
-    }
+        default: false,
+    },
 });
 
-module.exports = mongoose.model('questionnaire', QuestionnaireSchema);
+module.exports = mongoose.model("questionnaire", QuestionnaireSchema);
