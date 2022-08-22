@@ -120,4 +120,45 @@ router.post('/sendSuggestionsMail', fetchUser, async (req, res)=>{
     }
 })
 
+// ROUTE 7: Fetch an questionnaire using: Post "/api/questionnaire/fetchQuestionnaire"; Login required
+router.get('/fetchQuestionnaire/:id', fetchUser, async (req, res)=>{
+    success = false;
+    try{
+        let myQuestionnaire = await Questionnaire.findById(req.params.id);
+        if(!myQuestionnaire){ return res.status(404).json({success, errors:"Questionnaire not found"})}
+        if(myQuestionnaire.user.toString()!==req.user.id){
+            return res.status(401).json({success, errors:"Access Denied"});
+        }
+
+        myQuestionnaire = await Questionnaire.findById(req.params.id);
+        success = true;
+        res.status(200).json({success, myQuestionnaire});
+    }
+    catch(error){
+        console.error(error.message);
+        res.status(500).json({success, errors:"Internal server error"});
+    }
+})
+
+// ROUTE 8: Fetch an questionnaire at admin level using: Post "/api/questionnaire/fetchQuestionnaireAdmin"; Login required
+router.get('/fetchQuestionnaireAdmin/:id', fetchUser, async (req, res)=>{
+    success = false;
+    try{
+        const userId = req.user.id;
+        let user = await Admin.findById(userId).select("-password");
+        if (!user){ return res.status(401).json({success, errors: "Access denied"});}
+
+        let myQuestionnaire = await Questionnaire.findById(req.params.id);
+        if(!myQuestionnaire){ return res.status(404).json({success, errors:"Questionnaire not found"})}
+
+        myQuestionnaire = await Questionnaire.findById(req.params.id);
+        success = true;
+        res.status(200).json({success, myQuestionnaire});
+    }
+    catch(error){
+        console.error(error.message);
+        res.status(500).json({success, errors:"Internal server error"});
+    }
+})
+
 module.exports = router;

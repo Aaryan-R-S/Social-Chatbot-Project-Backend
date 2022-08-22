@@ -132,4 +132,27 @@ router.post('/deleteAdmin', fetchAdmin, async (req, res)=>{
     }
 })
 
+// ROUTE 5: check authentication of a user using: GET "/api/authAdmin/checkLogin"; Auth token required
+router.get('/checkLogin', fetchAdmin, async (req, res)=>{
+    success = false;
+    const token = req.header('auth-token');
+    if(!token){
+        return res.status(401).json({success, errors:"Missing auth token"})
+    }
+    try{
+        const data = jwt.verify(token, JWT_SECRET);
+        const userId = data.user.id;
+
+        let user = await Admin.findById(userId);
+        if(!user){ return res.status(400).json({success, errors:"Admin not found"})}
+
+        success = true;
+        res.status(200).json({success, user});
+    }
+    catch(error){
+        console.error(error.message);
+        res.status(500).json({success, errors:"Internal server error"});
+    }
+})
+
 module.exports = router;

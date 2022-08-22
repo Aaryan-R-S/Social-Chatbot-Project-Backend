@@ -9,7 +9,7 @@ const { body, validationResult } = require('express-validator');
 // For initial fetch give uid 0
 // If possible answer is empty then answer id -1
 
-// ROUTE 1: Get basic question using: GET "/api/question/fetchNext"; No Login required
+// ROUTE 1: Get next question using: GET "/api/question/fetchNext"; No Login required
 router.post('/fetchNext', [
         body('uniqueid', 'No Question ID provided').isLength({min:1}), 
         body('answerid', 'No Answer ID provided').isLength({min:1})
@@ -117,6 +117,52 @@ router.post('/addQuestion', fetchAdmin, [
         console.error(error.message);
         res.status(500).json({success, errors:"Internal server error"});
     }
+})
+
+// ROUTE 3: Get basic question using: GET "/api/question/fetchCurr"; No Login required
+router.post('/fetchCurr', [
+    body('uniqueid', 'No Question ID provided').isLength({min:1})
+], async (req, res)=>{
+
+success = false;
+
+// In case of errors return bad request along with error messages
+const errors = validationResult(req);
+if (!errors.isEmpty()) {
+    // it is not working as express validator is doing it automatically so it is redundant
+    return res.status(400).json({ success, errors: errors.array() });
+}
+
+try{
+    let myCurrQuestion = null;
+    // first question
+    if(req.body.uniqueid=="0"){
+        success = true;
+        let myCurrQuestionResults = {questionTxt:"", answers:[], suggestions: [], videos: []};
+        return res.status(200).json({success, myCurrQuestionResults});
+    }
+    else{
+        myCurrQuestion = await Question.findOne({uniqueid: req.body.uniqueid});
+        if(myCurrQuestion==null){
+            // restart
+            let myCurrQuestionResults = {questionTxt:"", answers:[], suggestions: [], videos: []};
+            return res.status(400).json({success, errors: "Invalid uniqueid provided", myCurrQuestionResults})
+        }
+        else{
+            let myCurrQuestionResults = {questionTxt:"", answers:[], suggestions: [], videos: []};
+            success = true;
+            myCurrQuestionResults.questionTxt = myCurrQuestion.text;
+            myCurrQuestionResults.answers = myCurrQuestion.answers;
+            myCurrQuestionResults.suggestions = myCurrQuestion.suggestions;
+            myCurrQuestionResults.videos = myCurrQuestion.videos;
+            res.status(200).json({success, myCurrQuestionResults});
+        }
+    }
+}
+catch(error){
+    console.error(error.message);
+    res.status(500).json({success, errors:"Internal server error"});
+}
 })
 
 module.exports = router;
