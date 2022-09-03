@@ -6,7 +6,7 @@ require('dotenv').config();
 connectToMongo();
 
 const app = express()
-const port = process.env.PORT
+const port = process.env.PORT || 5000
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -21,5 +21,5 @@ app.use('/api/questionnaire', require('./routes/questionnaire'))
 app.use('/api/question', require('./routes/question'))
 
 app.listen(port, () => {
-  console.log(`Social Chatbot backend app listening at http://localhost:${port}`)
+  console.log(`Social Chatbot backend app listening at https://social-chatbot-backend-iiitd.herokuapp.com/ on port ${port}`)
 })
