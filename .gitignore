@@ -7,6 +7,7 @@ node_modules/
 
 # testing
 /coverage
+guide.todo
 
 # production
 /build
