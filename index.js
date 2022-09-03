@@ -21,5 +21,5 @@ app.use('/api/questionnaire', require('./routes/questionnaire'))
 app.use('/api/question', require('./routes/question'))
 
 app.listen(port, () => {
-  console.log(`Social Chatbot backend app listening at https://social-chatbot-backend-iiitd.herokuapp.com/ on port ${port}`)
+  console.log(`Social Chatbot backend app listening at https://social-chatbot-backend-iiitd.herokuapp.com/ or http://localhost:${port}`)
 })
