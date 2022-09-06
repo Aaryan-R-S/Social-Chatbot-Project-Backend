@@ -8,6 +8,7 @@ node_modules/
 # testing
 /coverage
 guide.todo
+questions_db/
 
 # production
 /build
