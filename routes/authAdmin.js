@@ -9,12 +9,12 @@ require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// ROUTE 1: create an admin using: POST "/api/authAdmin/addAdmin"; No login required
+// ROUTE 1: create an admin using: POST "/api/authAdmin/addAdmin"; Login required
 router.post('/addAdmin', [
         body('name', 'Enter a valid name of minimum length 3').isLength({min:3}), 
         body('email', 'Enter a valid email id').isEmail(),
         body('password', 'Enter a valid password of minimum length 5').isLength({min:5})
-    ], async (req, res)=>{
+    ], fetchAdmin, async (req, res)=>{
 
     success = false;
     
@@ -26,8 +26,13 @@ router.post('/addAdmin', [
     }
 
     try{
+        const userId = req.user.id;
+
+        let user = await Admin.findById(userId);
+        if(!user){ return res.status(401).json({success, errors:"Not an admin"})}
+
         // Check with the user with this email exist already
-        let user = await Admin.findOne({email: req.body.email});
+        user = await Admin.findOne({email: req.body.email});
         if (user){ return res.status(400).json({ success, errors: "Admin already exists"});}
         
         const salt = await bcrypt.genSalt(10);
@@ -132,7 +137,7 @@ router.post('/deleteAdmin', fetchAdmin, async (req, res)=>{
     }
 })
 
-// ROUTE 5: check authentication of a user using: GET "/api/authAdmin/checkLogin"; Auth token required
+// ROUTE 5: check authentication of admin using: GET "/api/authAdmin/checkLogin"; Auth token required
 router.get('/checkLogin', fetchAdmin, async (req, res)=>{
     success = false;
     const token = req.header('auth-token');
