@@ -68,10 +68,16 @@ router.post('/fetchNext', [
         }
         let myCurrQuestionResults = {questionTxt:"", answers:[], suggestions: [], videos: []};
         if (myCurrQuestion){ 
-            if(myCurrQuestion.suggestions.length>0 && myCurrQuestion.suggestions[req.body.answerid]!==null){
+            if (myCurrQuestion.suggestions.length>0 && req.body.answerid==-1){
+                myCurrQuestionResults.suggestions = myCurrQuestion.suggestions;
+            }
+            else if(myCurrQuestion.suggestions.length>0 && myCurrQuestion.suggestions[req.body.answerid]!==null){
                 myCurrQuestionResults.suggestions = [myCurrQuestion.suggestions[req.body.answerid]];
             }
-            if(myCurrQuestion.videos.length>0 && myCurrQuestion.videos[req.body.answerid]!==null){
+            if(myCurrQuestion.videos.length>0 && req.body.answerid==-1){
+                myCurrQuestionResults.videos = myCurrQuestion.videos;
+            }
+            else if(myCurrQuestion.videos.length>0 && myCurrQuestion.videos[req.body.answerid]!==null){
                 myCurrQuestionResults.videos = [myCurrQuestion.videos[req.body.answerid]];
             }
             myCurrQuestionResults.questionTxt = myCurrQuestion.text;
