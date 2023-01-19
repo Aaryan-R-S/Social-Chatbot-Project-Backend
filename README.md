@@ -1,3 +1,11 @@
+# Social Chatbot Backend
+
+## Workflow
+![img2](./images/flow.png)
+
+## Decision Tree
+![img1](./images/tree.png)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
